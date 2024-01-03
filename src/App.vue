@@ -1,26 +1,60 @@
+//App.vue
+
+<script setup>
+import FromComp from "./components/FormComp.vue";
+import Comment from "./components/CommentComp.vue";
+</script>
+
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <FromComp @formSend="formSend" />
+  <button @click="setSortMode('likes')">LIKE</button>
+  <button @click="setSortMode('data')">DATA</button>
+  <div v-for="(component, index) in comments" :key="index">
+    <Comment :value="component.value" :likes="component.likes" :data="component.sec"/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
+  name: "App",
+  data() {
+    return {
+      comments: [],
+      sortMode: "a",
+    };
+  },
   components: {
-    HelloWorld
+    FromComp,
+    Comment,
+  },
+  methods: {
+    formSend(value) {
+      this.comments.push({
+        value: value.comment,
+        likes: value.likes,
+        sec: value.data,
+      });
+      console.log(value);
+      this.sortedComments();
+    },
+    setSortMode(button){
+      this.sortMode=button=="likes"?'likes':'data';
+      this.sortedComments();
+    }
+    ,
+    sortedComments() {
+      if (this.sortMode == "likes") {
+        this.comments.sort((a, b) => b.likes - a.likes);
+      }else{
+        this.comments.sort((a, b) => b.sec - a.sec);
+      }
+    },
   }
-}
+};
 </script>
 
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
